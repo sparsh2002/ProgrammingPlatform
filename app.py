@@ -5,16 +5,22 @@ import jwt
 from datetime import datetime, timedelta
 import os
 from dotenv import load_dotenv
+from bson.objectid import ObjectId
+from database import decoder
+
+
 load_dotenv()
 db = conn.client['cometlabs']
-
 app = Flask(__name__)
+app.json_encoder = decoder.MongoJSONEncoder
+
+
 app.config['SECRET_KEY'] = os.getenv('MY_SECRET')
-# @app.before_first_request
-# def create_collections():
-#     users = db.users
-#     users.create_index('username', unique=True)
-#     users.create_index('email', unique=True)
+@app.before_first_request
+def create_collections():
+    users = db.users
+    users.create_index('username', unique=True)
+    users.create_index('email', unique=True)
 
 @app.route('/', methods=['GET'])
 def home():
@@ -63,7 +69,7 @@ def login():
         token = jwt.encode(
             {
                 'username': user['username'],
-                'exp': datetime.utcnow() + timedelta(hours=1)
+                'exp': datetime.utcnow() + timedelta(hours=24)
             },
             app.config['SECRET_KEY'],
             algorithm='HS256'
@@ -90,6 +96,17 @@ def protected():
 
     except jwt.InvalidTokenError:
         return jsonify({'error': 'Invalid token'})
+
+
+@app.route('/get-problem-by-id' , methods=['GET'])
+def getProblemById():
+    id = int(request.args.get('id'))
+    problems = db.problems
+    problem = problems.find_one({'id':id})
+    
+    # return jsonify(problem)
+    return problem
+
 
 
 if __name__ == '__main__':
