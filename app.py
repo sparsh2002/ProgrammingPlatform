@@ -3,9 +3,13 @@ from flask import Flask, request, jsonify
 from werkzeug.security import generate_password_hash, check_password_hash
 import jwt
 from datetime import datetime, timedelta
-app = Flask(__name__)
+import os
+from dotenv import load_dotenv
+load_dotenv()
 db = conn.client['cometlabs']
 
+app = Flask(__name__)
+app.config['SECRET_KEY'] = os.getenv('MY_SECRET')
 # @app.before_first_request
 # def create_collections():
 #     users = db.users
@@ -43,14 +47,17 @@ def signup():
 
 @app.route('/login', methods=['POST'])
 def login():
+    print('login Attempted')
     users = db.users
     username = request.json['username']
     password = request.json['password']
-
+    role = request.json['role']
+    # print(username , password, role)
     # Find the user by username
     user = users.find_one({'username': username})
+    # print(user)
 
-    # Check if the user exists and verify the password
+    # # Check if the user exists and verify the password
     if user and check_password_hash(user['password'], password):
         # Generate JWT token
         token = jwt.encode(
@@ -64,6 +71,7 @@ def login():
         return jsonify({'token': token})
 
     return jsonify({'error': 'Invalid username or password'})
+    return 'Done'
 
 @app.route('/protected', methods=['GET'])
 def protected():
