@@ -116,8 +116,10 @@ def Problems():
             return jsonify(documents)
 
     elif request.method == 'POST':
-        res = creatProblem()
+        # print(request.json)
+        res = creatProblem(request.json)
         return res
+        # return 'Done'
     
     elif request.method == 'PUT':
         res = updateProblem()
