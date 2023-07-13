@@ -9,6 +9,9 @@ from bson.objectid import ObjectId
 from database import decoder
 from sphereEngine.problems import creatProblem , updateProblem , deleteProblem
 from sphereEngine.testcase import createTestCase, getAllTestCases , getTestCase , updateTestCase
+from sphereEngine.compiler import createSubmission
+
+
 load_dotenv()
 db = conn.client['cometlabs']
 app = Flask(__name__)
@@ -159,6 +162,22 @@ def testcases():
     
     else:
         return 'Method Not Defined'
+    
+@app.route('/submissions' , methods=['GET' , 'POST' ])
+def submission():
+    if request.method=='GET':
+
+        return 'Done'
+    
+    elif request.method == 'POST':
+        id = int(request.args.get('id'))
+        uploaded_file = request.files['source']
+        source = uploaded_file.read().decode('utf-8')
+        res  = createSubmission(id , source)
+        return  res
+    
+    else:
+        return 'Method not allowed'
 
 if __name__ == '__main__':
     app.run(debug=True)
