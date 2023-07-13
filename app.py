@@ -10,7 +10,7 @@ from database import decoder
 from sphereEngine.problems import creatProblem , updateProblem , deleteProblem
 from sphereEngine.testcase import createTestCase, getAllTestCases , getTestCase , updateTestCase
 from sphereEngine.compiler import createSubmission
-
+from middlewares.decodeToken import decode_token
 
 load_dotenv()
 db = conn.client['cometlabs']
@@ -60,7 +60,6 @@ def login():
     users = db.users
     username = request.json['username']
     password = request.json['password']
-    role = request.json['role']
     # print(username , password, role)
     # Find the user by username
     user = users.find_one({'username': username})
@@ -72,6 +71,7 @@ def login():
         token = jwt.encode(
             {
                 'username': user['username'],
+                'role':user['role'],
                 'exp': datetime.utcnow() + timedelta(hours=24)
             },
             app.config['SECRET_KEY'],
@@ -80,7 +80,6 @@ def login():
         return jsonify({'token': token})
 
     return jsonify({'error': 'Invalid username or password'})
-    return 'Done'
 
 @app.route('/protected', methods=['GET'])
 def protected():
@@ -120,12 +119,32 @@ def Problems():
 
     elif request.method == 'POST':
         # print(request.json)
+        token = None
+        auth_header = request.headers.get('Authorization')
+        if auth_header and auth_header.startswith('Bearer '):
+            token = auth_header.split(' ')[1]
+
+        print(token)
+        user  = decode_token(token)
+        print(user)
+        if user['role'] != 'admin':
+            return 'Method Not allowed!!'
         res = creatProblem(request.json)
         return res
         # return 'Done'
     
     elif request.method == 'PUT':
         problemId = int(request.args.get('id'))
+        token = None
+        auth_header = request.headers.get('Authorization')
+        if auth_header and auth_header.startswith('Bearer '):
+            token = auth_header.split(' ')[1]
+
+        print(token)
+        user  = decode_token(token)
+        print(user)
+        if user['role'] != 'admin':
+            return 'Method Not allowed!!'
         res = updateProblem(request.json , problemId)
         return res
     
@@ -142,6 +161,16 @@ def testcases():
     if request.method == 'GET':
         id = request.args.get('id')
         number = request.args.get('number')
+        token = None
+        auth_header = request.headers.get('Authorization')
+        if auth_header and auth_header.startswith('Bearer '):
+            token = auth_header.split(' ')[1]
+
+        print(token)
+        user  = decode_token(token)
+        print(user)
+        if user['role'] != 'admin':
+            return 'Method Not allowed!!'
         if id is not None and number is not None:
             res = getTestCase(int(id) , int(number))
             return res
@@ -149,6 +178,16 @@ def testcases():
             res = getAllTestCases(int(id))
             return res
     elif request.method == 'POST':
+        token = None
+        auth_header = request.headers.get('Authorization')
+        if auth_header and auth_header.startswith('Bearer '):
+            token = auth_header.split(' ')[1]
+
+        print(token)
+        user  = decode_token(token)
+        print(user)
+        if user['role'] != 'admin':
+            return 'Method Not allowed!!'
         id = request.args.get('id')
         res = createTestCase(int(id) , request.json)
         return res
@@ -156,6 +195,16 @@ def testcases():
     elif request.method == 'PUT':
         id = request.args.get('id')
         number = request.args.get('number')
+        token = None
+        auth_header = request.headers.get('Authorization')
+        if auth_header and auth_header.startswith('Bearer '):
+            token = auth_header.split(' ')[1]
+
+        print(token)
+        user  = decode_token(token)
+        print(user)
+        if user['role'] != 'admin':
+            return 'Method Not allowed!!'
         res = updateTestCase(int(id)  , int(number), request.json)
         return res
     
