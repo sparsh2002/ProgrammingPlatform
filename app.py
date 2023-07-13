@@ -8,7 +8,7 @@ from dotenv import load_dotenv
 from bson.objectid import ObjectId
 from database import decoder
 from sphereEngine.problems import creatProblem , updateProblem , deleteProblem
-
+from sphereEngine.testcase import createTestCase, getAllTestCases , getTestCase , updateTestCase
 load_dotenv()
 db = conn.client['cometlabs']
 app = Flask(__name__)
@@ -134,6 +134,31 @@ def Problems():
 
         return 'Method Not Defined'
 
+@app.route('/problems/:id/testcases/:number' , methods=['GET' , 'POST' , 'PUT' ])
+def testcases():
+    if request.method == 'GET':
+        id = request.args.get('id')
+        number = request.args.get('number')
+        if id is not None and number is not None:
+            res = getTestCase(int(id))
+            return res
+        else:
+            res = getAllTestCases(int(id), int(number))
+            return res
+    elif request.method == 'POST':
+        id = request.args.get('id')
+        res = createTestCase(int(id) , request.json)
+        return res
+    
+    elif request.method == 'PUT':
+        id = request.args.get('id')
+        number = request.args.get('number')
+        res = updateTestCase(int(id)  , int(number), request.json)
+        return res
+    
+    
+    else:
+        return 'Method Not Defined'
 
 if __name__ == '__main__':
     app.run(debug=True)
