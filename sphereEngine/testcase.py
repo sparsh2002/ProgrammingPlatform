@@ -14,9 +14,9 @@ db = dbclient['cometlabs']
 
 def createTestCase(problemId , data):
     try:
-        response = client.problems.createTestcase(id = problemId, input = data.input, 
-                                                  output = data.output, time_limit =  data.time_limit, 
-                                                  judgeId = data.judgeId)
+        response = client.problems.createTestcase(problemId, data['input'], 
+                                                  data['output'],  int(data['time_limit']), 
+                                                   int(data['judge_id']))
     # response['number'] stores the number of created testcase
     except SphereEngineException as e:
         if e.code == 401:
@@ -32,7 +32,7 @@ def createTestCase(problemId , data):
             print('Error code: ' + str(e.error_code) + ', details available in the message: ' + str(e))
             return 'Error code: ' + str(e.error_code) + ', details available in the message: ' + str(e)
 
-    num_cases = response.number
+    num_cases = response['number']
 
     testcases = db.testcases
 
@@ -48,9 +48,9 @@ def createTestCase(problemId , data):
         elif e.code == 404:
             print('Problem does not exist')
             return 'the problem does not exist'
-    
+    response['problemId'] = problemId
     if testcases.find_one({"id":problemId}):
-        testcases.update_one(response)
+        testcases.update_one({"id":problemId},{"$set":response})
     else:
         testcases.insert_one(response)
 

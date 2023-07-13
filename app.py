@@ -134,7 +134,7 @@ def Problems():
 
         return 'Method Not Defined'
 
-@app.route('/problems/:id/testcases/:number' , methods=['GET' , 'POST' , 'PUT' ])
+@app.route('/problems/testcases' , methods=['GET' , 'POST' , 'PUT' ])
 def testcases():
     if request.method == 'GET':
         id = request.args.get('id')
