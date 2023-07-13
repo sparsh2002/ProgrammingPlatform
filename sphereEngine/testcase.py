@@ -63,12 +63,30 @@ def getAllTestCases(problemId):
     testcases = db.testcases
     
     res = testcases.find_one({"problemId":problemId})
-
-    return res['items']
+    if res is not None:
+        return res['items']
+    else:
+        return 'Nothing Found'
 
 
 def getTestCase(problemId , testCaseId):
-    return 'Done'
+    query = {
+        'problemId' : problemId,
+        'items': {
+            '$elemMatch': {
+                'number': testCaseId
+            }
+        }
+    }
+
+    testcases = db.testcases
+
+    res = testcases.find_one(query)
+    if res is not None:
+        return res['items'][testCaseId]
+
+    else:
+        return 'Not found'
 
 def updateTestCase():
     return 'Done'
