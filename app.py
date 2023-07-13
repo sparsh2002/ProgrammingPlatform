@@ -7,7 +7,7 @@ import os
 from dotenv import load_dotenv
 from bson.objectid import ObjectId
 from database import decoder
-
+from sphereEngine.problems import creatProblem , updateProblem , deleteProblem
 
 load_dotenv()
 db = conn.client['cometlabs']
@@ -116,16 +116,16 @@ def Problems():
             return jsonify(documents)
 
     elif request.method == 'POST':
-
-        return 'Done'
+        res = creatProblem()
+        return res
     
     elif request.method == 'PUT':
-
-        return 'Done'
+        res = updateProblem()
+        return res
     
     elif request.method == 'DELETE':
-
-        return 'Done'
+        res = deleteProblem()
+        return res
     else:
 
         return 'Method Not Defined'
