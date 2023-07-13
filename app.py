@@ -98,15 +98,37 @@ def protected():
         return jsonify({'error': 'Invalid token'})
 
 
-@app.route('/get-problem-by-id' , methods=['GET'])
-def getProblemById():
-    id = int(request.args.get('id'))
+@app.route('/problems' , methods=['GET' , 'POST' , 'PUT' , 'DELETE'])
+def Problems():
     problems = db.problems
-    problem = problems.find_one({'id':id})
-    
-    # return jsonify(problem)
-    return problem
+    if request.method == 'GET':
+        if request.args.get('id') is not None:
+            id = int(request.args.get('id'))
+            problem = problems.find_one({'id':id})
+            
+            # return jsonify(problem)
+            return problem
+        else:
+            projection = {"_id": 1, "name": 1}
 
+            documents = list(problems.find({}, projection))
+
+            return jsonify(documents)
+
+    elif request.method == 'POST':
+
+        return 'Done'
+    
+    elif request.method == 'PUT':
+
+        return 'Done'
+    
+    elif request.method == 'DELETE':
+
+        return 'Done'
+    else:
+
+        return 'Method Not Defined'
 
 
 if __name__ == '__main__':
