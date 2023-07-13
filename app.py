@@ -122,11 +122,13 @@ def Problems():
         # return 'Done'
     
     elif request.method == 'PUT':
-        res = updateProblem()
+        problemId = int(request.args.get('id'))
+        res = updateProblem(request.json , problemId)
         return res
     
     elif request.method == 'DELETE':
-        res = deleteProblem()
+        problemId = int(request.args.get('id'))
+        res = deleteProblem(problemId)
         return res
     else:
 
