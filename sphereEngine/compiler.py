@@ -25,8 +25,20 @@ def createSubmission(problemId , source):
         elif e.code == 400:
             print('Error code: ' + str(e.error_code) + ', details available in the message: ' + str(e))
     
+    submissionID = response['id']
+    try:
+        response = client.submissions.get(submissionID)
+    except SphereEngineException as e:
+        if e.code == 401:
+            print('Invalid access token')
+        elif e.code == 403:
+            print('Access to the submission is forbidden')
+        elif e.code == 404:
+            print('Submission does not exist')
+
+    
     if response is not None:
-        return response 
+        return response
     else:
-        return "Couldn't make submission"
+        return 'An error Occured'
     
