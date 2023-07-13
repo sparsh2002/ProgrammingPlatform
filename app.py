@@ -140,10 +140,10 @@ def testcases():
         id = request.args.get('id')
         number = request.args.get('number')
         if id is not None and number is not None:
-            res = getTestCase(int(id))
+            res = getTestCase(int(id) , int(number))
             return res
         else:
-            res = getAllTestCases(int(id), int(number))
+            res = getAllTestCases(int(id))
             return res
     elif request.method == 'POST':
         id = request.args.get('id')

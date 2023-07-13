@@ -58,11 +58,16 @@ def createTestCase(problemId , data):
     return f'{num_cases} test cases created successfully for the problem id:{problemId}'
 
 
-def getAllTestCases():
-    return 'Done'
+def getAllTestCases(problemId):
+    
+    testcases = db.testcases
+    
+    res = testcases.find_one({"problemId":problemId})
+
+    return res['items']
 
 
-def getTestCase():
+def getTestCase(problemId , testCaseId):
     return 'Done'
 
 def updateTestCase():
